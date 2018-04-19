@@ -13,10 +13,25 @@ TensorFlow作为一块机器学习框架，功能非常强大，经过几年的�
 
 ## TensorFlow分布式模式
 
-基本工作方式
----------------------
+**熟悉的朋友可以跳过**
+
+#### 基本工作方式
 这里将经典的参数服务器架构，两种核心的角色：ps和worker。基本工作方式：ps（Parameter Server）顾名思义是参数服务器，用于更新模型中的参数，worker用于训练模型中的参数并把训练完的参数发给ps，ps收集到每个worker的参数后，进行汇总更新（例如求均值），更新完后将新的参数发送给worker，worker拿到新的参数后继续新的训练，如此往复直到收敛。详情可以查看：[TensorFlow架构](https://www.tensorflow.org/extend/architecture)
 
+#### 运行时概念
+在分布式运行是，可以指定ps在哪些机器上，worker指定在哪些机器上运行，如下
+```
+tf.train.ClusterSpec({
+    "worker": [
+        "worker0.example.com:2222",
+        "worker1.example.com:2222",
+        "worker2.example.com:2222"
+    ],
+    "ps": [
+        "ps0.example.com:2222",
+        "ps1.example.com:2222"
+    ]})
+```
 ## In Graph解释
 ## Between Graph解释
 ## 具体两种模式的代码举例
