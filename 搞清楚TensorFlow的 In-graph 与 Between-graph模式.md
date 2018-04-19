@@ -86,10 +86,53 @@ multiple tasks in a worker job training the same model on different mini-batches
 
 ## 具体两种模式的代码举例
 
-常用的In Graph编程模式
+常用的In Graph编程模式（同步）
 ```
+with tf.Graph().as_default():
+    input, labels = get_inputs_and_labels()
+    global_step = global_step = tf.get_variable('global_step', [],
+                                initializer=tf.constant_initializer(0), trainable=False)
+    ...
+    grads = []
+    for i in range(gpu_nums):
+        with tf.device('/gpu:%d' % i):
+            with tf.name_scope('model_%d' % i) as scope:
+                # define your model
+                ...
+                grads.append(grad)
+    # compute average grads
+    # applying grads
 ```
 
-常用的Between Graph编程模式
+常用的Between Graph编程模式（同步）
 ```
+# Create any optimizer to update the variables, say a simple SGD:
+opt = GradientDescentOptimizer(learning_rate=0.1)
+
+# Wrap the optimizer with sync_replicas_optimizer with 50 replicas: at each
+# step the optimizer collects 50 gradients before applying to variables.
+# Note that if you want to have 2 backup replicas, you can change
+# total_num_replicas=52 and make sure this number matches how many physical
+# replicas you started in your job.
+opt = tf.train.SyncReplicasOptimizer(opt, replicas_to_aggregate=50,
+                               total_num_replicas=50)
+                               
+# Now you can call `minimize()` or `compute_gradients()` and
+# `apply_gradients()` normally
+training_op = opt.minimize(total_loss, global_step=self.global_step)
+
+# You can create the hook which handles initialization and queues.
+sync_replicas_hook = opt.make_session_run_hook(is_chief)
+
+with training.MonitoredTrainingSession(
+    master=workers[worker_id].target, is_chief=is_chief,
+    hooks=[sync_replicas_hook]) as mon_sess:
+  while not mon_sess.should_stop():
+    mon_sess.run(training_op)
 ```
+
+
+## 参考资料
+[TF Distributed](https://www.tensorflow.org/deploy/distributed)
+[In Graph Example Code](https://github.com/tensorflow/models/blob/master/tutorials/image/cifar10/cifar10_multi_gpu_train.py)
+[Between Graph Example Code](https://www.tensorflow.org/api_docs/python/tf/train/SyncReplicasOptimizer)
