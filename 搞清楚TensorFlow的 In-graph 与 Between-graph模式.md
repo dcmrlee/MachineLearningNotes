@@ -133,6 +133,6 @@ with training.MonitoredTrainingSession(
 
 
 ## 参考资料
-[TF Distributed](https://www.tensorflow.org/deploy/distributed)
-[In Graph Example Code](https://github.com/tensorflow/models/blob/master/tutorials/image/cifar10/cifar10_multi_gpu_train.py)
-[Between Graph Example Code](https://www.tensorflow.org/api_docs/python/tf/train/SyncReplicasOptimizer)
++ [TF Distributed](https://www.tensorflow.org/deploy/distributed)
++ [In Graph Example Code](https://github.com/tensorflow/models/blob/master/tutorials/image/cifar10/cifar10_multi_gpu_train.py)
++ [Between Graph Example Code](https://www.tensorflow.org/api_docs/python/tf/train/SyncReplicasOptimizer)
