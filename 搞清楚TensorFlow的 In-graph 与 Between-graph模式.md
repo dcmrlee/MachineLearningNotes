@@ -62,6 +62,7 @@ with tf.device("/job:worker/task:7"):
 
 #### 数据并行
 
+multiple tasks in a worker job training the same model on different mini-batches of data ,updating shared parameters hosted in one or more tasks in a ps job
 
 ## In Graph解释
 
