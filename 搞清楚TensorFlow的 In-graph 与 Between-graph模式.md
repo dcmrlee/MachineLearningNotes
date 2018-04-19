@@ -1,6 +1,17 @@
 
-# 背景知识
-# TensorFlow分布式模式
-# In Graph解释
-# Between Graph解释
-# 具体两种模式的代码举例
+## 背景知识
+
+TensorFlow作为一块机器学习框架，功能非常强大，经过几年的发展，已经越来越复杂了，框架本身也做过很多优化，省去了算法工程师很多工作。但是，如果想用好TensorFlow也需要对其本身有一些深入的了解。本文重点想解释清楚TensorFlow中的In-graph与Between-graph两种机制。
+
+In-graph与Between-graph两种机制，其实指的是TensorFlow进行分布式训练中，两种构造计算图的方式，在编码的时候能看到明显的区别，这种区别同时也会带来计算图执行过程中的一些差异。
+
+想要理解这两种机制，需要一定的背景知识：
+
++计算图的概念
++变量与设备
++分布式模式
+
+## TensorFlow分布式模式
+## In Graph解释
+## Between Graph解释
+## 具体两种模式的代码举例
