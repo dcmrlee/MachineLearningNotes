@@ -7,9 +7,9 @@ In-graph与Between-graph两种机制，其实指的是TensorFlow进行分布式�
 
 想要理解这两种机制，需要一定的背景知识：
 
-+计算图的概念
-+变量与设备
-+分布式模式
++ 计算图的概念
++ 变量与设备
++ 分布式模式
 
 ## TensorFlow分布式模式
 ## In Graph解释
