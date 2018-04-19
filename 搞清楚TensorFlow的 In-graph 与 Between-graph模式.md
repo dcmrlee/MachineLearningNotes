@@ -64,7 +64,32 @@ with tf.device("/job:worker/task:7"):
 
 multiple tasks in a worker job training the same model on different mini-batches of data ,updating shared parameters hosted in one or more tasks in a ps job
 
+#### 执行过程
+写好代码 --> client提交代码 --> master --> 启动 ps和worker开始进行分布式计算
+
+---
+有了上述概念就比较好理解了
+
+
 ## In Graph解释
 
+一个client，构造**一个计算图**，其中的参数定义在ps上，将模型中计算复杂的操作，**拷贝多份**定义在不同的worker上
+
+支持同步和异步训练
+
 ## Between Graph解释
+
+多个client，都定义了相似的计算图，每个worker上有一个完整且相同的计算图
+
+支持同步和异步训练
+
+
 ## 具体两种模式的代码举例
+
+常用的In Graph编程模式
+```
+```
+
+常用的Between Graph编程模式
+```
+```
