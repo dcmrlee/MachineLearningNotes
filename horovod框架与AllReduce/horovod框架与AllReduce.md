@@ -25,7 +25,18 @@ AllReduce的劣势就是对抗failover不太好，如果任意一个worker失败
 
 Horovod框架是Uber开源的AllReduce框架
 
-跑了下官方提供的mnist例子，发现在模型小、数据量小的时候，还是尽量别用，因为网络开销是大头。如图：
+跑了下官方提供的mnist例子，发现在模型小、数据量小的时候，还是尽量别用，因为网络开销是大头。如图为单GPU一个step的耗时，基本平均在5ms左右：
+
 ![单GPU一个step耗时](./images/single_gpu.jpg)
 
+
+如果使用horovod以后，例如3个GPU分别在三个node上时，一个step的耗时，基本平均在80ms左右，其中约70ms为网络通信开销，如下图
+
+![mutligpu](./images/mutligpu.jpg)
+
 ## 参考资料
+
++ [bring hpc to deep learning](http://research.baidu.com/bringing-hpc-techniques-deep-learning/)
++ [mpi allgaterh](http://mpitutorial.com/tutorials/mpi-scatter-gather-and-allgather/)
++ [mpi allreduce](http://mpitutorial.com/tutorials/mpi-reduce-and-allreduce/)
++ [horovod mnist example](https://github.com/uber/horovod/blob/master/examples/tensorflow_mnist.py)
