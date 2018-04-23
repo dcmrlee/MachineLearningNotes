@@ -46,3 +46,6 @@ with tf.train.MonitoredTrainingSession(hooks=hooks) as mon_sess:
 上述方法都会将timeline的内容保存到最后的json文件中，可以使用chrome浏览器查看
 打开浏览器，输入chrome://tracing  , 点击load按钮，选择相应的json文件即可查看
 
+
+### 参考资料
+[how to profile tensorflow](https://towardsdatascience.com/howto-profile-tensorflow-1a49fb18073d)
