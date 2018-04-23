@@ -22,7 +22,7 @@ with tf.Session() as sess:
                  run_metadata=run_metadata)
         fetched_timeline = timeline.Timeline(run_metadata.step_stats)
         chrome_trace = fetched_timeline.generate_chrome_trace_format()
-        with open('timeline_%d.json' % i, 'w') as f:
+        with open('timeline-%d.json' % i, 'w') as f:
             f.write(chrome_trace)
 ```
 ### 使用方法2
@@ -40,3 +40,9 @@ hooks = [
 with tf.train.MonitoredTrainingSession(hooks=hooks) as mon_sess:
     mon_sess.run(train_op, feed_dict=feed_dict)
 ```
+
+### 查看
+
+上述方法都会将timeline的内容保存到最后的json文件中，可以使用chrome浏览器查看
+打开浏览器，输入chrome://tracing  , 点击load按钮，选择相应的json文件即可查看
+
