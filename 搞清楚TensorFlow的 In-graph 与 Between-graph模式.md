@@ -93,15 +93,17 @@ with tf.Graph().as_default():
     global_step = global_step = tf.get_variable('global_step', [],
                                 initializer=tf.constant_initializer(0), trainable=False)
     ...
-    grads = []
+    tower_grads = []
     for i in range(gpu_nums):
         with tf.device('/gpu:%d' % i):
             with tf.name_scope('model_%d' % i) as scope:
                 # define your model
                 ...
-                grads.append(grad)
+                tower_grads.append(grad)
     # compute average grads
     # applying grads
+grads = average_gradients(tower_grads)
+apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
 ```
 
 常用的Between Graph编程模式（同步）
