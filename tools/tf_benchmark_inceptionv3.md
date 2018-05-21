@@ -8,10 +8,15 @@
     - DISK: CephFS
     - Net: 10Gb/s
     - GPU: P40
-        - Topo: ![P40 Topo](images/p40_gpu_topo.jpg)
+        - Topo: 
+   ![P40 Topo](images/p40_gpu_topo.jpg)
 3. Model(Inception-V3) Info:
     - Nums of param: 23M
     - Memory of params: 23M * float32 = 92MB
     - Memory of Derivatives: 92MB
+4. Training Data Info:
+    - File size range: 127MB - 162MB
+    - File average size: 144M 
 
 ## Experiments
+
