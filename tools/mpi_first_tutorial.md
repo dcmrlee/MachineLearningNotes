@@ -4,25 +4,25 @@
 
 ## 创建MPI镜像
 1. 准备的环境：
-- CentOS 7.x
-- ssh: yum install openssh openssh-server openssh-clients
-- gcc: yum install gcc gcc-c++
-- make: yum install make
-- rpmbuild: yum install rpmbuild
-- glibc: yum install glibc-headers
+    - CentOS 7.x
+    - ssh: yum install openssh openssh-server openssh-clients
+    - gcc: yum install gcc gcc-c++
+    - make: yum install make
+    - rpmbuild: yum install rpmbuild
+    - glibc: yum install glibc-headers
 
 2. 下载OpenMPI包
-例如：openmpi-3.1.0-1.src.rpm，注意这里是source rpm，而并非binary rpm
+    例如：openmpi-3.1.0-1.src.rpm，注意这里是source rpm，而并非binary rpm
 
 3. 安装MPI环境
-- rpm -ivh openmpi-3.1.0-1.src.rpm
-- cd rpmbuild/SPECS
-- rpmbuild -ba openmpi-3.1.0.spec
-- cd rpmbuild/RPMS/x86_64/
-- rpm -i openmpi-3.1.0-1.el7.centos.x86_64.rpm
+    - rpm -ivh openmpi-3.1.0-1.src.rpm
+    - cd rpmbuild/SPECS
+    - rpmbuild -ba openmpi-3.1.0.spec
+    - cd rpmbuild/RPMS/x86_64/
+    - rpm -i openmpi-3.1.0-1.el7.centos.x86_64.rpm
 
 4. 检查安装环境
-安装后应该可以看到有mpirun mpicc mpiexec等命令
+    安装后应该可以看到有mpirun mpicc mpiexec等命令
 
 ## 编写MPI的"Hello World"
 C的代码：mympi.c
