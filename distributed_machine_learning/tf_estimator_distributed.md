@@ -123,4 +123,5 @@ tf.estimator.train_and_evaluate(model, train_spec, eval_spec)
 
 ### 参考资料
 https://www.tensorflow.org/deploy/distributed
+
 https://www.tensorflow.org/api_docs/python/tf/estimator/train_and_evaluate
