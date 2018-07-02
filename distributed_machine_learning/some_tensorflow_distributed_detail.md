@@ -155,6 +155,7 @@ run unchanged.)
  
 ### tensorflow参数同步代码的实例（ps、worker之间）
 重点函数：call_for_each_tower
+实例如下：
 ```python
     # Called once in "cross-tower" context.
     def merge_fn(distribution, three_plus_tower_id):
