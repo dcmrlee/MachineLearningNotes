@@ -93,3 +93,63 @@ run unchanged.)
     the same device.  Otherwise you can use `non_slot_devices()` to
     pick a consistent set of devices to pass to both
     `colocate_vars_with()` and `update_non_slot()`.
+
+### Rules for methods with respect to locality and single-tower vs. cross-tower context
+接口函数能体现看下解耦的思路
+  * `with d.scope()`: default single-tower context -> cross-tower context for
+    `d`
+  * `with d.colocate_vars_with(v)`: in tower/cross-tower context, variables
+    will be created with locality V(`v`). That is, if we write
+    `with d.colocate_vars_with(v1): v2 = tf.get_variable(...)`, then
+    `v2` will have locality V(`v1`), i.e. locality V(`v2`) will equal
+    V(`v1`).
+  * `with d.colocate_vars_with(d.non_slot_devices(...))`: in
+    tower/cross-tower context, variables will be created with locality N
+  * `v = tf.get_variable(...)`: in tower/cross-tower context, creates
+    a variable (which by definition will have locality V(`v`), though
+    will match another locality if inside a `colocate_vars_with`
+    scope).
+  * `d.distribute_dataset(dataset)`: in cross-tower context, produces an
+    iterator with locality T
+  * `d.broadcast(t)`: in cross-tower context, produces a value with locality M
+  * `d.broadcast(t, v)`: in cross-tower context, produces a value with
+    locality V(`v`)
+  * `d.call_for_each_tower(fn, ...)`: in cross-tower context, runs
+    `fn()` in a tower context (and so may call `get_tower_context()` and
+    use its API, including `merge_call()` to get back to cross-tower
+    context), once for each tower. May use values with locality T or
+    M, and any variable.
+  * `d.reduce(m, t)`: in cross-tower context, accepts t with locality T
+    and produces a value with locality M.
+  * `d.reduce(m, t, v)`: in cross-tower context, accepts t with
+    locality T and produces a value with locality V(`v`).
+  * `d.batch_reduce(m, [(t, v)])`: see `d.reduce()`
+  * `d.update(v, fn, ...)`: in cross-tower context, runs `fn()` once
+    for each device `v` is copied to, all inputs should have locality
+    V(`v`), output will have locality V(`v`) as well.
+  * `d.update_non_slot(d.non_slot_devices(), fn)`: in cross-tower
+    context, like `d.update()` except with locality N.
+  * `d.fetch(t)`: Copy `t` with any locality to the client's CPU device.
+
+### standard pattern for updating variables
+  1. Wrap your input dataset in `d.distribute_dataset()`.
+  2. Define each tower `d.call_for_each_tower()` up to the point of
+     getting a list of gradient, variable pairs.
+  3. Call `d.reduce("sum", t, v)` or `d.batch_reduce()` to sum the
+     gradients (with locality T) into values with locality V(`v`).
+  4. Call `d.update(v)` for each variable to update its value.
+  
+  Steps 3 and 4 are done automatically by class `Optimizer` if you call
+  its `apply_gradients` method in a tower context. Otherwise you can
+  manually call its `_distributed_apply` method in a cross-tower context.
+  
+  Another thing you might want to do in the middle of your tower function
+  is an all-reduce of some intermediate value, using `d.reduce()` or
+  `d.batch_reduce()` without supplying a variable as the destination.
+  
+  Layers should expect to be called in a tower context, and can use
+  the `get_tower_context()` function to get a `TowerContext` object.  The
+  `TowerContext` object has a `merge_call()` method for entering
+  cross-tower context where you can use `reduce()` (or
+  `batch_reduce()`) and then optionally `update()` to update state.
+ 
