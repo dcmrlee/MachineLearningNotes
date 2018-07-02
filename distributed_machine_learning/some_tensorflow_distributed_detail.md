@@ -153,3 +153,35 @@ run unchanged.)
   cross-tower context where you can use `reduce()` (or
   `batch_reduce()`) and then optionally `update()` to update state.
  
+### tensorflow参数同步代码的实例（ps、worker之间）
+重点函数：call_for_each_tower
+```python
+    # Called once in "cross-tower" context.
+    def merge_fn(distribution, three_plus_tower_id):
+      # sum the values across towers
+      return sum(distribution.unwrap(three_plus_tower_id))
+
+    # Called once per tower in `distribution`, in a "tower" context.
+    def fn(three):
+      tower_ctx = tf.get_tower_context()
+      v = three + tower_ctx.tower_id
+      # Computes the sum of the `v` values across all towers.
+      s = tower_ctx.merge_call(merge_fn, v)
+      return s + v
+
+    with distribution.scope():
+      # in "cross-tower" context
+      ...
+      merged_results = distribution.call_for_each_tower(fn, 3)
+      # merged_results has the values from every tower execution of `fn`.
+      print(distribution.unwrap(merged_results))  # Prints a list
+```
+`fn` may call `tf.get_tower_context()` to access methods such as
+    `tower_id()` and `merge_call()`.
+
+ `merge_call()` is used to communicate betwen the towers and
+    re-enter the cross-tower context. All towers pause their execution
+    having encountered a `merge_call()` call. After that the
+    `merge_fn`-function is executed. Its results are then unwrapped and
+    given back to each tower call. After that execution resumes until
+    `fn` is complete or encounters another `merge_call()`.
